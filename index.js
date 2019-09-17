@@ -25,6 +25,7 @@ const evalRouter = function (json,Lazy,keys) {
             component = obj.component,
             path = obj.path;
             name = obj.name;
+            beforeEnter = obj.beforeEnter;
         componentName = evalName(keys,componentName);
         if(obj.lazy != undefined ) {
             lazy = obj.lazy;
@@ -33,9 +34,9 @@ const evalRouter = function (json,Lazy,keys) {
         if(obj.children){
             children = evalRouter(obj.children,lazy,keys);
             result.header += children.header;
-            result.body += `\n{\n    path: '${path}',\n${obj.meta != undefined ? 'meta:'+JSON.stringify(obj.meta)+',' : ''}\n    component: ${Name},\n    children:[${children.body}]},`;
+            result.body += `\n{\n    path: '${path}',\n${obj.meta != undefined ? 'meta:'+JSON.stringify(obj.meta)+',' : ''}\n${obj.name != undefined ? 'name:'+JSON.stringify(obj.name)+',' :''}\n${obj.beforeEnter != undefined ? 'beforeEnter:'+JSON.stringify(obj.beforeEnter)+',' :''}\n    component: ${componentName},\n    children:[${children.body}]},`;
         }else{
-            result.body += `\n{\n    path: '${path}',\n${obj.meta != undefined ? 'meta:'+JSON.stringify(obj.meta)+',' : ''}\n    component: ${Name}\n},`;
+            result.body += `\n{\n    path: '${path}',\n${obj.meta != undefined ? 'meta:'+JSON.stringify(obj.meta)+',' : ''}\n${obj.name != undefined ? 'name:'+JSON.stringify(obj.name)+',' :''}\n${obj.beforeEnter != undefined ? 'beforeEnter:'+JSON.stringify(obj.beforeEnter)+',' :''}\n    component: ${componentName}\n},`;
         }
         if(!lazy){
             result.header += `\nimport ${componentName} from '${component}';`;
