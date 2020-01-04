@@ -21,14 +21,8 @@ const evalRouter = function (json,Lazy,keys) {
         var componentName = item,
             obj = json[item],
             lazy = Lazy,
-            chunkName = Lazy;
-            if (obj.components) {
-              components = obj.components;
-              component = null;
-            } else {
-              components = null;
-              component = obj.component;
-            }
+            chunkName = Lazy,
+            component = obj.component,
             path = obj.path;
             name = obj.name;
             beforeEnter = obj.beforeEnter;
@@ -45,24 +39,9 @@ const evalRouter = function (json,Lazy,keys) {
             result.body += `\n{\n    path: '${path}',\n${obj.meta != undefined ? 'meta:'+JSON.stringify(obj.meta)+',' : ''}\n${obj.name != undefined ? 'name:'+JSON.stringify(obj.name)+',' :''}\n${obj.beforeEnter != undefined ? 'beforeEnter:'+JSON.stringify(obj.beforeEnter)+',' :''}\n    component: ${componentName}\n},`;
         }
         if(!lazy){
-            if (components) {
-                const values = Object.values(components);
-                values.forEach(function(component) {
-                    result.header += `\nimport ${componentName} from '${component}';`;
-                });
-            } else {
-                result.header += `\nimport ${componentName} from '${component}';`;
-            }
-            
+            result.header += `\nimport ${componentName} from '${component}';`;
         }else{
-            if (components) {
-                const values = Object.values(components);
-                values.forEach(function(component) {
-                    result.header += `\nconst ${componentName} = r=>require.ensure([],()=>r(require('${component}')),'${chunkName}');`;
-                });
-            } else {
-                result.header += `\nconst ${componentName} = r=>require.ensure([],()=>r(require('${component}')),'${chunkName}');`;
-            }
+            result.header += `\nconst ${componentName} = r=>require.ensure([],()=>r(require('${component}')),'${chunkName}');`;
         }
 
     });
