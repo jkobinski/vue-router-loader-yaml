@@ -42,8 +42,10 @@ const evalRouter = function (json,Lazy,keys) {
             if(obj.components) {
                 var components = `\n{\n  default: '${componentName}'`;
                 Object.keys(obj.components).forEach((name) => {
-                    if(name === 'default') return;
-                    // console.log(obj.components[name], 'obj.components[name]');
+                    if(name === 'default') {
+                        result = setLazy(lazy, result, componentName, obj.components[name], chunkName);
+                        return;
+                    }
                     components += `,\n  ${obj.components[name].name}: ${name}`;
                     result = setLazy(lazy, result, name, obj.components[name].component, chunkName);
                 });
@@ -55,7 +57,7 @@ const evalRouter = function (json,Lazy,keys) {
             } 
         }
     });
-    result.body = result.body.replace(/,$/gi,'')
+    result.body = result.body.replace(/,$/gi,'');
     return result;
 }
 
