@@ -57,6 +57,34 @@ describe('Nested router', function() {
         assert(result.indexOf('children')>-1);
     });
 });
+
+describe('Nested router has components', function() {
+    it('should resolve Nested router has components', function() {
+        var result = loader(`
+            index:
+                path: /
+                component: ./platform/system/index/index.vue
+                children:
+                    userList:
+                        path: /users
+                        component: ./platform/system/users/index.vue
+                        lazy:  system
+                    testList:
+                        path: /test
+                        components:
+                            default: ./platform/system/test/index.vue
+                            testListA: 
+                                name: a
+                                component: ./platform/system/test/a/index.vue
+                            testListB: 
+                                name: b
+                                component: ./platform/system/test/b/index.vue
+                        lazy:  system
+        `);
+        assert(result.indexOf('components')>-1);
+    });
+});
+
 describe('lazyload extends and overwrited', function() {
     it('should extends or overwrited lazyload from parent', function() {
         var result = loader(`
