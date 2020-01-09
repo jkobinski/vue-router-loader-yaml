@@ -40,7 +40,8 @@ const evalRouter = function (json,Lazy,keys) {
             result = setLazy(lazy,result,componentName, component, chunkName);
         } else {
             if(obj.components) {
-                var components = `\n{\n  default: '${componentName}'`;
+                console.log(componentName, 'componentName');
+                var components = `\n{\n  default: ${componentName}`;
                 Object.keys(obj.components).forEach((name) => {
                     if(name === 'default') {
                         result = setLazy(lazy, result, componentName, obj.components[name], chunkName);
@@ -58,14 +59,19 @@ const evalRouter = function (json,Lazy,keys) {
         }
     });
     result.body = result.body.replace(/,$/gi,'');
+    console.log(result, 'result');
     return result;
 }
 
 const setLazy = function (lazy,result,componentName, component, chunkName) {
     if(!lazy){
-        result.header += `\nimport ${componentName} from '${component}';`;
-    }else{
-        result.header += `\nconst ${componentName} = r=>require.ensure([],()=>r(require('${component}')),'${chunkName}');`;
+        if(result.header.indexOf(`import ${componentName} from `) == -1) {
+            result.header += `\nimport ${componentName} from '${component}';`;
+        }
+    } else{
+        if(result.header.indexOf(`const ${componentName} = `) == -1) {
+            result.header += `\nconst ${componentName} = r=>require.ensure([],()=>r(require('${component}')),'${chunkName}');`;
+        }
     }
     return result;
 }
