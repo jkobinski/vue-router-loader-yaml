@@ -138,6 +138,3 @@ describe('Nested router has components', function() {
 //         assert(result.indexOf('index$1')>-1);
 //     });
 // });
-
-
-

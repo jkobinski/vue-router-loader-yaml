@@ -36,7 +36,7 @@ const evalRouter = function (json,Lazy,keys) {
         if (obj.children) {
             children = evalRouter(obj.children,lazy,keys);
             result.header += children.header;
-            result.body += `\n{\n    path: '${path}',\n${obj.meta != undefined ? 'meta:'+JSON.stringify(obj.meta)+',' : ''}\n${obj.name != undefined ? 'name:'+JSON.stringify(obj.name)+',' :''}\n${obj.beforeEnter != undefined ? 'beforeEnter:'+JSON.stringify(obj.beforeEnter)+',' :''}\n    component: ${componentName},\n    children:[${children.body}]},`;
+            result.body += `\n{\n    path: '${path}',\n${obj.meta != undefined ? '    meta:'+JSON.stringify(obj.meta)+',' : ''}\n${obj.name != undefined ? '    name:'+JSON.stringify(obj.name)+',' :''}\n${obj.redirect != undefined ? '    redirect:'+JSON.stringify(obj.redirect)+',' :''}\n${obj.beforeEnter != undefined ? 'beforeEnter:'+JSON.stringify(obj.beforeEnter)+',' :''}\n    component: ${componentName},\n    children:[${children.body}]},`;
             result = setLazy(lazy,result,componentName, component, chunkName);
         } else {
             if (obj.components) {
@@ -50,9 +50,10 @@ const evalRouter = function (json,Lazy,keys) {
                     result = setLazy(lazy, result, name, obj.components[name].component, chunkName);
                 });
                 components += '\n}';
-                result.body += `\n{\n    path: '${path}',\n${obj.meta != undefined ? 'meta:'+JSON.stringify(obj.meta)+',' : ''}\n${obj.name != undefined ? 'name:'+JSON.stringify(obj.name)+',' :''}\n${obj.beforeEnter != undefined ? 'beforeEnter:'+JSON.stringify(obj.beforeEnter)+',' :''}\n    components: ${components}\n},`; 
+                result.body += `\n{
+                    \n    path: '${path}',\n${obj.meta != undefined ? '    meta:'+JSON.stringify(obj.meta)+',' : ''}\n${obj.name != undefined ? '    name:'+JSON.stringify(obj.name)+',' :''}\n${obj.redirect != undefined ? '    redirect:'+JSON.stringify(obj.redirect)+',' :''}\n${obj.beforeEnter != undefined ? 'beforeEnter:'+JSON.stringify(obj.beforeEnter)+',' :''}\n    components: ${components}\n},`; 
             } else {
-                result.body += `\n{\n    path: '${path}',\n${obj.meta != undefined ? 'meta:'+JSON.stringify(obj.meta)+',' : ''}\n${obj.name != undefined ? 'name:'+JSON.stringify(obj.name)+',' :''}\n${obj.beforeEnter != undefined ? 'beforeEnter:'+JSON.stringify(obj.beforeEnter)+',' :''}\n    component: ${componentName}\n},`;
+                result.body += `\n{\n    path: '${path}',\n${obj.meta != undefined ? '    meta:'+JSON.stringify(obj.meta)+',' : ''}\n${obj.name != undefined ? '    name:'+JSON.stringify(obj.name)+',' :''}\n${obj.redirect != undefined ? '    redirect:'+JSON.stringify(obj.redirect)+',' :''}\n${obj.beforeEnter != undefined ? 'beforeEnter:'+JSON.stringify(obj.beforeEnter)+',' :''}\n    component: ${componentName}\n},`;
                 result = setLazy(lazy,result,componentName, component, chunkName);
             } 
         }
@@ -68,7 +69,7 @@ const setLazy = function (lazy,result,componentName, component, chunkName) {
         }
     } else {
         if (result.header.indexOf(`const ${componentName} = `) == -1) {
-            result.header += `\nconst ${componentName} = r=>require.ensure([],()=>r(require('${component}')),'${chunkName}');`;
+            result.header += `\nconst ${componentName} = () => import('${component}');`;
         }
     }
     return result;
